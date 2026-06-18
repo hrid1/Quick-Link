@@ -1,0 +1,17 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db" // এই লাইনটি ফিরিয়ে আনুন
+}
+
+model Link {
+  id          String   @id @default(uuid())
+  originalUrl String
+  shortCode   String   @unique
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+}
