@@ -1,7 +1,10 @@
-import type { NextConfig } from "next";
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  // This tells React to suppress the hydration error
+  experimental: {
+    turbo: undefined, // Disable turbopack if it was enabled, it can cause hydration issues sometimes
+  },
+}
 
-const nextConfig: NextConfig = {
-  /* config options here */
-};
-
-export default nextConfig;
+module.exports = nextConfig

@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db" // এই লাইনটি ফিরিয়ে আনুন
+  url      = "file:./dev.db" 
 }
 
 model Link {
