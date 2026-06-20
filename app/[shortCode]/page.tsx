@@ -2,12 +2,11 @@
 import { PrismaClient } from '@prisma/client';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { Clock, Home } from 'lucide-react';
 
 const prisma = new PrismaClient();
 
-// Note: params is now a Promise, so we need to use 'await' in the function signature
 export default async function RedirectPage({ params }: { params: Promise<{ shortCode: string }> }) {
-  // Await the params to get the actual data
   const { shortCode } = await params;
 
   const link = await prisma.link.findUnique({
@@ -15,7 +14,7 @@ export default async function RedirectPage({ params }: { params: Promise<{ short
   });
 
   if (!link) {
-    return <ExpiredPage message="Link not found." />;
+    return <ExpiredPage message="This link doesn't exist or has been deleted." />;
   }
 
   if (new Date() > link.expiresAt) {
@@ -27,17 +26,23 @@ export default async function RedirectPage({ params }: { params: Promise<{ short
 
 function ExpiredPage({ message }: { message: string }) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
-      <div className="rounded-lg bg-white p-8 shadow-lg text-center">
-        <h1 className="mb-4 text-2xl font-bold text-gray-800">Oops!</h1>
-        <p className="mb-6 text-gray-600">{message}</p>
+    <main className="relative flex min-h-screen items-center justify-center p-4 bg-gray-950 overflow-hidden">
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-red-500/10 rounded-full blur-[120px] pointer-events-none" />
+
+      <div className="relative z-10 text-center max-w-md mx-auto">
+        <div className="w-20 h-20 bg-red-500/10 border border-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+          <Clock className="w-10 h-10 text-red-400" />
+        </div>
+        <h1 className="text-3xl font-bold text-white mb-3">Time's Up!</h1>
+        <p className="text-gray-400 mb-8 text-lg">{message}</p>
         <Link 
           href="/"
-          className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition-colors"
+          className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-xl transition-colors border border-gray-700"
         >
-          Create a new link
+          <Home className="w-5 h-5" />
+          Go to QuickLink
         </Link>
       </div>
-    </div>
+    </main>
   );
 }
