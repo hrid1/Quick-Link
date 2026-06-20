@@ -10,6 +10,7 @@ datasource db {
   url      = env("DATABASE_URL") 
 }
 
+
 model Link {
   id          String   @id @default(uuid())
   originalUrl String
