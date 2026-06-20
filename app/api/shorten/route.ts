@@ -80,6 +80,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ 
       shortUrl: `${baseUrl}/${link.shortCode}` 
     });
+    
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: 'Error creating link' }, { status: 500 });
