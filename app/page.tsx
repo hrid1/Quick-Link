@@ -15,6 +15,7 @@ export default function Home() {
   const [copied, setCopied] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [customAlias, setCustomAlias] = useState("");
+  const [isLinkDrip, setIsLinkDrip] = useState(false); 
 
   useEffect(() => {
     setIsMounted(true);
@@ -31,7 +32,7 @@ export default function Home() {
       const res = await fetch("/api/shorten", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url, durationType, customDate, customAlias }),
+        body: JSON.stringify({ url, durationType, customDate, customAlias, isLinkDrip }), // isLinkDrip যুক্ত করা হলো
       });
 
       const data = await res.json();
@@ -165,6 +166,27 @@ export default function Home() {
                 </div>
               </div>
 
+              {/* Link Drip Toggle */}
+<div className="flex items-center justify-between bg-gray-800/30 border border-gray-700/50 rounded-xl p-4">
+  <div>
+    <p className="text-sm font-medium text-gray-200">Link Drip (Single-Use)</p>
+    <p className="text-xs text-gray-500 mt-0.5">Link will automatically destroy after 1 click.</p>
+  </div>
+  <button
+    type="button"
+    onClick={() => setIsLinkDrip(!isLinkDrip)}
+    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${
+      isLinkDrip ? 'bg-purple-600' : 'bg-gray-600'
+    }`}
+  >
+    <span
+      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+        isLinkDrip ? 'translate-x-6' : 'translate-x-1'
+      }`}
+    />
+  </button>
+</div>
+
               {/* Custom Date Picker (Conditional) */}
               {durationType === "custom" && (
                 <div className="animate-in fade-in duration-300">
@@ -272,6 +294,7 @@ export default function Home() {
                   setResult(null);
                   setUrl("");
                   setCustomAlias("");
+                  setIsLinkDrip(false);
                 }}
                 className="mt-6 text-sm text-gray-500 hover:text-gray-300 underline transition-colors"
               >

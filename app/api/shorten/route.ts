@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const { url, durationType, customDate, customAlias } = body;
+  const { url, durationType, customDate, customAlias, isLinkDrip } = body;
 
   if (!url) {
     return NextResponse.json({ error: 'URL is required' }, { status: 400 });
@@ -69,6 +69,7 @@ export async function POST(req: Request) {
         originalUrl: url,
         shortCode: finalShortCode, // <--- এখানে finalShortCode ব্যবহার করা হয়েছে
         alias: customAlias || null, // <--- ডাটাবেসে আলাদাভাবে সেভ করার জন্য
+        maxClicks: isLinkDrip ? 1 : null, 
         expiresAt,
       },
     });

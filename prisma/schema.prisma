@@ -15,6 +15,7 @@ model Link {
   originalUrl String
   shortCode   String   @unique
   alias       String?
+  maxClicks   Int?
   expiresAt   DateTime
   createdAt   DateTime @default(now())
 }
