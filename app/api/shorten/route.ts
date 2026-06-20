@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const { url, durationType, customDate } = body;
+  const { url, durationType, customDate, customAlias } = body;
 
   if (!url) {
     return NextResponse.json({ error: 'URL is required' }, { status: 400 });
@@ -39,14 +39,36 @@ export async function POST(req: Request) {
       expiresAt = addDays(now, 1); // Default 1 day
   }
 
-  // Generate a random short code (6 characters)
-  const shortCode = Math.random().toString(36).substring(2, 8);
+  let finalShortCode: string;
+
+  if (customAlias && customAlias.trim() !== '') {
+    // কাস্টম এলিয়াস থাকলে সেটাই ব্যবহার হবে
+    finalShortCode = customAlias.trim().toLowerCase();
+    
+    // চেক করা হচ্ছে এলিয়াসে শুধু মাত্র আলফানিউমেরিক ক্যারেক্টার আছে কিনা (যেমন: my-portfolio-123)
+    if (!/^[a-z0-9_-]+$/.test(finalShortCode)) {
+      return NextResponse.json({ error: 'Alias can only contain lowercase letters, numbers, hyphens, and underscores.' }, { status: 400 });
+    }
+
+    // চেক করা হচ্ছে এই নামটা আগে থেকে ডাটাবেসে আছে কিনা
+    const existingLink = await prisma.link.findUnique({
+      where: { shortCode: finalShortCode },
+    });
+
+    if (existingLink) {
+      return NextResponse.json({ error: 'This alias is already taken. Try another one.' }, { status: 409 }); // 409 = Conflict
+    }
+  } else {
+    // কাস্টম এলিয়াস না দিলে র‍্যান্ডম কোড জেনারেট হবে
+    finalShortCode = Math.random().toString(36).substring(2, 8);
+  }
 
   try {
     const link = await prisma.link.create({
       data: {
         originalUrl: url,
-        shortCode,
+        shortCode: finalShortCode, // <--- এখানে finalShortCode ব্যবহার করা হয়েছে
+        alias: customAlias || null, // <--- ডাটাবেসে আলাদাভাবে সেভ করার জন্য
         expiresAt,
       },
     });
