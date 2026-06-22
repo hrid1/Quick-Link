@@ -75,12 +75,13 @@ export async function POST(req: Request) {
     });
 
     // Note: If your port is 3001, use that in the link or use env variable
+    
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     
     return NextResponse.json({ 
       shortUrl: `${baseUrl}/${link.shortCode}` 
     });
-    
+
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: 'Error creating link' }, { status: 500 });

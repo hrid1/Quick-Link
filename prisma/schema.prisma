@@ -18,5 +18,6 @@ model Link {
   alias       String?
   maxClicks   Int?
   expiresAt   DateTime
+  clicks      Int     @default(0) 
   createdAt   DateTime @default(now())
 }
